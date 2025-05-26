@@ -31,6 +31,10 @@ RUN apk add --no-cache \
 RUN curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH:-amd64}/kubectl" && \
     chmod +x kubectl && \
     mv kubectl /usr/local/bin/kubectl
+RUN  set -x; cd "$(mktemp -d)" && \
+    curl -fsSLO "https://github.com/ahmetb/kubectx/releases/download/v0.9.5/kubectx_v0.9.5_linux_x86_64.tar.gz" && \
+    tar zxvf kubectx_v0.9.5_linux_x86_64.tar.gz && mv kubectx /usr/local/bin/kubectx 
+
 # Install Helm
 RUN curl -LO "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH:-amd64}.tar.gz" && \
     tar -zxvf helm-${HELM_VERSION}-linux-${TARGETARCH:-amd64}.tar.gz && \
@@ -55,7 +59,6 @@ RUN chsh -s /bin/zsh ${USERNAME} || true
 # We'll also ensure .zshrc is present for devops.
 RUN echo 'export ZSH="/home/devops/.oh-my-zsh"' >> /home/devops/.zshrc && \
     echo 'source $ZSH/oh-my-zsh.sh' >> /home/devops/.zshrc
-
 
 # Configure .zshrc for the non-root user
 RUN { \
