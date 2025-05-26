@@ -59,6 +59,7 @@ RUN echo 'export ZSH="/home/devops/.oh-my-zsh"' >> /home/devops/.zshrc && \
 
 
 # Configure .zshrc for the non-root user
+# This includes adding krew's bin directory to the PATH.
 RUN { \
         echo "# Path to your Oh My Zsh installation."; \
         echo "export ZSH=\"/home/${USERNAME}/.oh-my-zsh\""; \
@@ -67,7 +68,10 @@ RUN { \
         echo "# Standard plugins can be found in \$ZSH/plugins/"; \
         echo "plugins=(git kubectl helm)"; \
         echo "source \$ZSH/oh-my-zsh.sh"; \
+        echo ""; \
         echo "# User configuration"; \
+        echo "export KREW_ROOT=\"/home/${USERNAME}/.krew\""; \
+        echo "export PATH=\"\${KREW_ROOT}/bin:\${PATH}\""; \
         echo "export PATH=\"/usr/local/bin:\$PATH\""; \
         echo ""; \
         echo "# Custom Aliases"; \
