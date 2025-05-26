@@ -9,10 +9,9 @@ on:
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/my-zsh-docker
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/kube-helm-zsh
   DOCKERFILE_PATH: ./Dockerfile
-    
-
+  
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -38,5 +37,5 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ env.IMAGE_NAME }}:${{ env.BUILD_VERSION }} 
-        dockerfile: ${{ env.DOCKERFILE_PATH }}
+        tags: ${{ env.IMAGE_NAME }}:${{ env.BUILD_VERSION }}
+        file: ${{ env.DOCKERFILE_PATH }}
