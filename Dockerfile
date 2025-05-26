@@ -31,13 +31,6 @@ RUN apk add --no-cache \
 RUN curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH:-amd64}/kubectl" && \
     chmod +x kubectl && \
     mv kubectl /usr/local/bin/kubectl
-# Install Krew
-RUN ( set -x; cd "$(mktemp -d)" && \
-    curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/v0.4.5/krew-linux_amd64.tar.gz" && \
-    tar zxvf krew-linux_amd64.tar.gz && \
-    KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" && \
-    "$KREW" install krew )
-
 # Install Helm
 RUN curl -LO "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH:-amd64}.tar.gz" && \
     tar -zxvf helm-${HELM_VERSION}-linux-${TARGETARCH:-amd64}.tar.gz && \
@@ -86,7 +79,14 @@ RUN { \
 
 # Ensure the .zshrc file is readable by the user
 RUN chmod 644 /home/devops/.zshrc
-   
+
+# Install Krew
+RUN ( set -x; cd "$(mktemp -d)" && \
+    curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/download/v0.4.5/krew-linux_amd64.tar.gz" && \
+    tar zxvf krew-linux_amd64.tar.gz && \
+    KREW=./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" && \
+    "$KREW" install krew )
+
 # Set the default shell to zsh for subsequent RUN, CMD, ENTRYPOINT
 SHELL ["/bin/zsh", "-c"]
 
@@ -94,7 +94,7 @@ SHELL ["/bin/zsh", "-c"]
 # RUN kubectl version --client && \
 #     helm version && \
 #     echo "Oh My Zsh should be installed. Current shell: $0"
-
+RUN mkdir $HOME/.kube
 # Set a working directory (optional)
 WORKDIR /home/devops
 
