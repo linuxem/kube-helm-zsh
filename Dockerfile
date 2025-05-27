@@ -25,6 +25,9 @@ RUN apk add --no-cache \
     openssh-client \
     zsh \
     wget \
+    sudo \
+    coreutils \
+    util-linux \
     util-linux # Provides 'chsh' if needed, though we'll set user shell differently
 
 # Install kubectl
