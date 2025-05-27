@@ -6,9 +6,11 @@ LABEL maintainer="eli.maor@gmail.com"
 ARG USERNAME=devops
 ARG USER_UID=1002
 ARG USER_GID=1002
+
 # Create a non-root user with specified UID and GID
 RUN addgroup -g ${USER_GID} ${USERNAME} && \
     adduser -D -u ${USER_UID} -G ${USERNAME} -s /bin/zsh ${USERNAME}
+
 # Define versions for Helm and kubectl (you can update these as needed)
 ARG KUBECTL_VERSION=v1.32.0
 # Define the Helm version and architecture
@@ -27,8 +29,11 @@ RUN apk add --no-cache \
     wget \
     sudo \
     coreutils \
-    util-linux \
     util-linux # Provides 'chsh' if needed, though we'll set user shell differently
+# add user to sudo group
+RUN addgroup ${USERNAME} wheel && \
+    echo "${USERNAME} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${USERNAME} && \
+    chmod 0440 /etc/sudoers.d/${USERNAME}    
 
 # Install kubectl
 RUN curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${TARGETARCH:-amd64}/kubectl" && \
@@ -44,6 +49,7 @@ RUN curl -LO "https://get.helm.sh/helm-${HELM_VERSION}-linux-${TARGETARCH:-amd64
     mv linux-${TARGETARCH:-amd64}/helm /usr/local/bin/helm && \
     rm -rf helm-${HELM_VERSION}-linux-${TARGETARCH:-amd64}.tar.gz linux-${TARGETARCH:-amd64}
 
+# Set the user to devops    
 USER ${USERNAME}
 # Install Oh My Zsh non-interactively
 # Running as devops, so Oh My Zsh will be installed for devops user
